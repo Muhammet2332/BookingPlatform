@@ -1,40 +1,23 @@
-\# BookingPlatform
+# BookingPlatform
 
+A modern, scalable booking platform built with **.NET 10** and **Clean Architecture** principles. Designed as a portfolio project to demonstrate modular backend development, separation of concerns, and production-ready project structuring.
 
+## Tech Stack
 
-Платформа для бронирования, построенная на .NET 10.
+* **Framework:** .NET 10 / ASP.NET Core Web API
+* **Architecture:** Clean Architecture / Modular Monolith (Domain, Application, Infrastructure, API)
+* **IDE & Tooling:** Visual Studio 2022/2026 (`.slnx` solution format)
 
+## Project Structure
 
+The solution is organized into distinct layers to ensure maintainability, testability, and loose coupling:
 
-\## Структура проекта
-
-
-
-\* `src/Catalog/Catalog.Api` — Web API сервис каталога (включает слои `Api`, `Application`, `Domain`, `Infrastructure`).
-
-\* `BookingPlatform.slnx` — файл решения.
-
-
-
-\## Требования
-
-
-
-\* \[.NET 10 SDK](https://dotnet.microsoft.com/download)
-
-\* Visual Studio 2022/2026, JetBrains Rider или VS Code
-
-
-
-\## Запуск проекта
-
-
-
-1\. Клонируйте репозиторий:
-
-&#x20;  ```bash
-
-&#x20;  git clone <url-репозитория>
-
-&#x20;  cd BookingPlatform
-
+```text
+BookingPlatform/
+├── src/
+│   └── Catalog/
+│       ├── Catalog.Api/            # Entry point, controllers/endpoints, middleware, DI setup
+│       ├── Catalog.Application/    # Business use cases, DTOs, interfaces, CQRS handlers
+│       ├── Catalog.Domain/         # Enterprise entities, value objects, domain logic
+│       └── Catalog.Infrastructure/ # Database context, repositories, external integrations
+└── BookingPlatform.slnx
