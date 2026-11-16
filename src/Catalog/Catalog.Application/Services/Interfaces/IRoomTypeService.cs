@@ -1,5 +1,4 @@
 ﻿using Catalog.Application.DTOs.Room_Types;
-using Catalog.Application.DTOs.RoomTypes;
 
 namespace Catalog.Application.Services.Interfaces
 {

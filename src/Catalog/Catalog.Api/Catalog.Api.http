@@ -5,16 +5,29 @@ POST {{Host}}/api/room-types
 Content-Type: application/json
 
 {
-  "name": "Standard",
-  "description": "Standard room with basic amenities"
+  "name": "Super Standard",
+  "description": "Super standard room with basic amenities"
 }
+
+### Get Room Type By Id
+GET {{Host}}/api/room-types/2
+Accept: application/json
+
+### Update Room Type
+PUT {{Host}}/api/room-types/1
+Content-Type: application/json
+
+{
+  "name": "Standard",
+  "description": "Standard room with basic amenities (Updated)"
+}
+
+### Deactivate Room Type
+DELETE {{Host}}/api/room-types/1
+Content-Type: application/json
 
 ### Get All Room Types
 GET {{Host}}/api/room-types
-Accept: application/json
-
-### Get Room Type By Id
-GET {{Host}}/api/room-types/1
 Accept: application/json
 
 ### Create Room
@@ -22,12 +35,32 @@ POST {{Host}}/api/rooms
 Content-Type: application/json
 
 {
-  "number": "101",
-  "roomTypeId": 1,
+  "number": "102",
+  "roomTypeId": 2,
   "basePricePerNight": 120.00,
   "description": "Standard room"
+}
+
+### Update Room
+PUT {{Host}}/api/rooms/2
+Content-Type: application/json
+
+{
+  "number": "102",
+  "roomTypeId": 2,
+  "basePricePerNight": 150.00,
+  "description": "Updated standard room",
+  "status": "Active"
 }
 
 ### Get Room
 GET {{Host}}/api/rooms/1
 Accept: application/json
+
+### Get AllRooms
+GET {{Host}}/api/rooms
+Accept: application/json
+
+### Deactivate Room
+DELETE {{Host}}/api/rooms/1
+Content-Type: application/json

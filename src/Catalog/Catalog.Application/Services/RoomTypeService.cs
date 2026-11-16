@@ -1,76 +1,126 @@
-﻿using Catalog.Application.DTOs.Room_Types;
+﻿
+using Catalog.Application.DTOs.Room_Types;
 using Catalog.Application.Services.Interfaces;
 using Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog.Application.Services
+namespace Catalog.Application.Services;
+
+public class RoomTypeService : IRoomTypeService
 {
-    public class RoomTypeService : IRoomTypeService
+    private readonly ICatalogDbContext _context;
+
+    public RoomTypeService(ICatalogDbContext context)
     {
-        private readonly ICatalogDbContext _context;
+        _context = context;
+    }
 
-        public RoomTypeService(ICatalogDbContext context)
+    public async Task<RoomTypeDto> CreateAsync(
+        CreateRoomTypeDto dto,
+        CancellationToken cancellationToken = default)
+    {
+        var name = dto.Name.Trim();
+
+        var exists = await _context.RoomTypes
+            .AnyAsync(x => x.Name == name, cancellationToken);
+
+        if (exists)
+            throw new InvalidOperationException(
+                "Room type with this name already exists.");
+
+        var roomType = new RoomType
         {
-            _context = context;
-        }
+            Name = name,
+            Description = dto.Description.Trim()
+        };
 
-        public async Task<RoomTypeDto> CreateAsync(
-            CreateRoomTypeDto dto,
-            CancellationToken cancellationToken = default)
-        {
-            var nameExists = await _context.RoomTypes
-                .AnyAsync(
-                    x => x.Name == dto.Name,
-                    cancellationToken);
+        _context.RoomTypes.Add(roomType);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            if (nameExists)
-                throw new InvalidOperationException(
-                    "Room type with this name already exists.");
+        return MapToDto(roomType);
+    }
 
-            var roomType = new RoomType
-            {
-                Name = dto.Name,
-                Description = dto.Description
-            };
+    public async Task<RoomTypeDto?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        var roomType = await _context.RoomTypes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
 
-            _context.RoomTypes.Add(roomType);
+        return roomType is null ? null : MapToDto(roomType);
+    }
 
-            await _context.SaveChangesAsync(cancellationToken);
+    public async Task<IReadOnlyList<RoomTypeDto>> GetAllAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.RoomTypes
+            .AsNoTracking()
+            .Select(x => new RoomTypeDto(
+                x.Id,
+                x.Name,
+                x.Description))
+            .ToListAsync(cancellationToken);
+    }
 
-            return new RoomTypeDto(
-                roomType.Id,
-                roomType.Name,
-                roomType.Description);
-        }
+    public async Task<RoomTypeDto?> UpdateAsync(
+        int id,
+        UpdateRoomTypeDto dto,
+        CancellationToken cancellationToken = default)
+    {
+        var roomType = await _context.RoomTypes
+            .FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
 
-        public async Task<RoomTypeDto?> GetByIdAsync(
-            int id,
-            CancellationToken cancellationToken = default)
-        {
-            var roomType = await _context.RoomTypes
-                .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    x => x.Id == id,
-                    cancellationToken);
+        if (roomType is null)
+            return null;
 
-            return roomType is null
-                ? null
-                : new RoomTypeDto(
-                    roomType.Id,
-                    roomType.Name,
-                    roomType.Description);
-        }
+        var name = dto.Name.Trim();
 
-        public async Task<IReadOnlyList<RoomTypeDto>> GetAllAsync(
-            CancellationToken cancellationToken = default)
-        {
-            return await _context.RoomTypes
-                .AsNoTracking()
-                .Select(x => new RoomTypeDto(
-                    x.Id,
-                    x.Name,
-                    x.Description))
-                .ToListAsync(cancellationToken);
-        }
+        var nameExists = await _context.RoomTypes
+            .AnyAsync(
+                x => x.Id != id && x.Name == name,
+                cancellationToken);
+
+        if (nameExists)
+            throw new InvalidOperationException(
+                "Room type with this name already exists.");
+
+        roomType.Name = name;
+        roomType.Description = dto.Description.Trim();
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return MapToDto(roomType);
+    }
+
+    public async Task<bool> DeactivateAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        var roomType = await _context.RoomTypes
+            .FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
+
+        if (roomType is null)
+            return false;
+
+        roomType.IsActive = false;
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+
+    private static RoomTypeDto MapToDto(RoomType roomType)
+    {
+        return new RoomTypeDto(
+            roomType.Id,
+            roomType.Name,
+            roomType.Description);
     }
 }

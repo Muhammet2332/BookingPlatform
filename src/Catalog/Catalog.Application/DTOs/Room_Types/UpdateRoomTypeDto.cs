@@ -1,4 +1,4 @@
-﻿namespace Catalog.Application.DTOs.RoomTypes;
+﻿namespace Catalog.Application.DTOs.Room_Types;
 
 public record UpdateRoomTypeDto(
     string Name,
