@@ -1,4 +1,5 @@
-﻿using Catalog.Infrastructure.Persistence;
+﻿using Catalog.Application.Services.Interfaces;
+using Catalog.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,9 @@ public static class DependencyInjection
     {
         services.AddDbContext<CatalogDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        services.AddScoped<ICatalogDbContext>(provider =>
+            provider.GetRequiredService<CatalogDbContext>());
 
         return services;
     }

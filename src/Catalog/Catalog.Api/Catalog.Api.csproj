@@ -19,4 +19,9 @@
     <ProjectReference Include="..\Catalog.Application\Catalog.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Contracts\Amenities\" />
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
 </Project>

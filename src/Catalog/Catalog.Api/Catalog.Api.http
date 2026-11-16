@@ -1,11 +1,33 @@
-@Catalog.Api_HostAddress = http://localhost:5272
+@Host = http://localhost:5272
 
-GET {{Catalog.Api_HostAddress}}/openapi/v1.json
+### Create Room Type
+POST {{Host}}/api/room-types
+Content-Type: application/json
+
+{
+  "name": "Standard",
+  "description": "Standard room with basic amenities"
+}
+
+### Get All Room Types
+GET {{Host}}/api/room-types
 Accept: application/json
 
-###
-
-GET {{Catalog.Api_HostAddress}}/weatherforecast/
+### Get Room Type By Id
+GET {{Host}}/api/room-types/1
 Accept: application/json
 
-###
+### Create Room
+POST {{Host}}/api/rooms
+Content-Type: application/json
+
+{
+  "number": "101",
+  "roomTypeId": 1,
+  "basePricePerNight": 120.00,
+  "description": "Standard room"
+}
+
+### Get Room
+GET {{Host}}/api/rooms/1
+Accept: application/json
